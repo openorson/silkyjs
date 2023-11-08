@@ -12,15 +12,18 @@ function hasOwn(value: unknown, prop: string) {
   return Object.hasOwnProperty.call(value, prop);
 }
 
-function createHandler(handler?: {
-  tracker?: (target: object, prop: string) => void;
-  trigger?: (mode: "add" | "set", target: object, prop: string, value: unknown, oldValue?: unknown) => void;
-}) {
+function createHandler(
+  handler?: {
+    tracker?: (args: { target: object; prop: string }) => void;
+    trigger?: (args: { mode: "add" | "set"; target: object; prop: string; path: string[]; value: unknown; oldValue?: unknown }) => void;
+  },
+  path: string[] = []
+) {
   return {
     get(target: object, prop: string, receiver: object) {
       const result = Reflect.get(target, prop, receiver);
-      handler?.tracker?.(target, prop);
-      if (isObject(result)) return createReactive(handler)(result);
+      handler?.tracker?.({ target, prop });
+      if (isObject(result)) return createReactive(handler, [...path, prop])(result);
       return result;
     },
     set(target: object, prop: string, value: unknown, receiver: object) {
@@ -29,9 +32,9 @@ function createHandler(handler?: {
       const result = Reflect.set(target, prop, value, receiver);
 
       if (!hadProp) {
-        handler?.trigger?.("add", target, prop, value);
+        handler?.trigger?.({ mode: "add", target, prop, path: [...path, prop], value });
       } else if (hasChanged(value, oldValue)) {
-        handler?.trigger?.("set", target, prop, value, oldValue);
+        handler?.trigger?.({ mode: "set", target, prop, path: [...path, prop], value, oldValue });
       }
 
       return result;
@@ -39,11 +42,14 @@ function createHandler(handler?: {
   };
 }
 
-export function createReactive(handler?: {
-  tracker?: (target: object, prop: string) => void;
-  trigger?: (mode: "add" | "set", target: object, prop: string, value: unknown, oldValue?: unknown) => void;
-}) {
-  const _handler = createHandler(handler);
+export function createReactive(
+  handler?: {
+    tracker?: (args: { target: object; prop: string }) => void;
+    trigger?: (args: { mode: "add" | "set"; target: object; prop: string; path: string[]; value: unknown; oldValue?: unknown }) => void;
+  },
+  _path: string[] = []
+) {
+  const _handler = createHandler(handler, _path);
 
   return function reactive<T extends object>(initialData: T): T {
     let observed = toProxy.get(initialData);

@@ -21,7 +21,8 @@ page.actions({
     page.state.count++;
   },
   changeName() {
-    page.state.user = { name: "rose", age: 17, info: { a: 1, b: 2 } };
+    // page.state.user = { name: "rose", age: 17, info: { a: 1, b: 2 } };
+    page.state.user.name = "rose";
   },
   changeInfo() {
     page.state.user.info = { a: 2, b: 3 };

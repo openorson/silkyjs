@@ -33,22 +33,8 @@ export function createPage<State extends {}, Actions extends Record<string, (...
   };
 
   const reactive = createReactive({
-    tracker(target, prop) {
-      console.group("state track");
-      console.log("target:", target);
-      console.log("prop:", prop);
-      console.groupEnd();
-    },
-    trigger(mode, target, prop, value, oldValue) {
-      _self.setData({ [prop]: value });
-
-      console.group("state trigger");
-      console.log("mode:", mode);
-      console.log("target:", target);
-      console.log("prop:", prop);
-      console.log("value:", value);
-      console.log("oldValue:", oldValue);
-      console.groupEnd();
+    trigger(args) {
+      _self.setData({ [args.path.join(".")]: args.value });
     },
   });
 
@@ -69,7 +55,7 @@ export function createPage<State extends {}, Actions extends Record<string, (...
     onLoad(callback) {
       _options["onLoad"] = function (...args) {
         _self = this;
-        callback(...args);
+        callback.call(null, ...args);
       };
       return this;
     },
