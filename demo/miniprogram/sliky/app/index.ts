@@ -1,6 +1,6 @@
-export interface App<State extends {} = {}> {
+export interface App {
+  get self(): WechatMiniprogram.App.Instance<WechatMiniprogram.IAnyObject>;
   get options(): Record<string, any>;
-  state: State;
   onLaunch: (callback: (options: WechatMiniprogram.App.LaunchShowOption) => void) => this;
   onShow: (callback: (options: WechatMiniprogram.App.LaunchShowOption) => void) => this;
   onHide: (callback: () => void) => this;
@@ -11,20 +11,23 @@ export interface App<State extends {} = {}> {
   bootstrap: () => void;
 }
 
-export function createApp<State extends {}>(initialState?: State): App<State> {
-  const state = (initialState ?? {}) as State;
+export function createApp(): App {
+  let _self: any = null;
 
-  const _options: Partial<WechatMiniprogram.App.Option> & Record<string, unknown> = {
-    state,
-  };
+  const _options: Partial<WechatMiniprogram.App.Option> & Record<string, unknown> = {};
 
-  const app: App<State> = {
+  const app: App = {
+    get self() {
+      return _self;
+    },
     get options() {
       return _options;
     },
-    state,
     onLaunch(callback) {
-      _options["onLaunch"] = callback.bind(null);
+      _options["onLaunch"] = function (...args) {
+        _self = this;
+        callback.call(null, ...args);
+      };
       return this;
     },
     onShow(callback) {

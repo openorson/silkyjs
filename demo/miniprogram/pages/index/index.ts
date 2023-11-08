@@ -1,6 +1,6 @@
 import { createPage } from "../../sliky/index.js";
 
-const page = createPage({
+let page = createPage({
   count: 1,
   user: {
     name: "jack",
@@ -13,10 +13,11 @@ const page = createPage({
 });
 
 page.onLoad((opts) => {
+  console.log(page.route);
   console.log("onLoad", opts);
 });
 
-page.actions({
+page = page.actions({
   incr() {
     page.state.count++;
   },

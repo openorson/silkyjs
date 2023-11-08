@@ -1,10 +1,15 @@
 import { createReactive } from "../common/reactive.js";
+import { Router } from "../router/index.js";
 
-export interface Page<State extends {} = {}, Actions extends Record<string, (...args: any[]) => any> = {}> {
+export interface Page<State extends {} = {}> {
   get self(): WechatMiniprogram.Page.Instance<State, {}>;
   get options(): Record<string, any>;
+  router: Router;
+  route: Route;
   state: State;
-  actions: (actions: Actions) => this;
+  trackers: (trackers: Record<string, () => void>) => this;
+  triggers: (triggers: Record<string, () => void>) => this;
+  actions: (actions: Record<string, () => void>) => this;
   onLoad: (callback: (query: Record<string, string | undefined>) => void | Promise<void>) => this;
   onShow: (callback: () => void | Promise<void>) => this;
   onReady: (callback: () => void | Promise<void>) => this;
@@ -23,7 +28,12 @@ export interface Page<State extends {} = {}, Actions extends Record<string, (...
   bootstrap: () => void;
 }
 
-export function createPage<State extends {}, Actions extends Record<string, (...args: any[]) => any>>(initialState?: State): Page<State, Actions> {
+export interface Route {
+  path: string;
+  query: object;
+}
+
+export function createPage<State extends {}>(initialState?: State): Page<State> {
   const initialData = (initialState ?? {}) as State;
 
   let _self: any = null;
@@ -40,6 +50,13 @@ export function createPage<State extends {}, Actions extends Record<string, (...
 
   const state = reactive(initialData);
 
+  const router = Router.getInstance();
+
+  const route: Route = {
+    path: "",
+    query: {},
+  };
+
   const page: Page<State> = {
     get self() {
       return _self;
@@ -47,7 +64,19 @@ export function createPage<State extends {}, Actions extends Record<string, (...
     get options() {
       return _options;
     },
+    get route() {
+      return route;
+    },
+    router,
     state,
+    trackers() {
+      // TODO
+      return this;
+    },
+    triggers() {
+      // TODO
+      return this;
+    },
     actions(actions) {
       Object.entries(actions).forEach(([name, action]) => (_options[name] = action));
       return this;
@@ -55,6 +84,8 @@ export function createPage<State extends {}, Actions extends Record<string, (...
     onLoad(callback) {
       _options["onLoad"] = function (...args) {
         _self = this;
+        route.path = _self.route;
+        route.query = args[0] ?? {};
         callback.call(null, ...args);
       };
       return this;
