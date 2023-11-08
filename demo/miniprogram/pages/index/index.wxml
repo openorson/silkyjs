@@ -1,0 +1,12 @@
+<view>
+  <view>{{ count }}</view>
+  <button bindtap="incr">自增</button>
+
+  <view>{{ user.name }}</view>
+  <view>{{ user.age }}</view>
+  <button bindtap="changeName">修改姓名</button>
+
+  <view>{{ user.info.a }}</view>
+  <view>{{ user.info.b }}</view>
+  <button bindtap="changeInfo">修改信息</button>
+</view>

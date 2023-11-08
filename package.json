@@ -1,0 +1,11 @@
+{
+  "name": "silkyjs",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "demo"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w packages/core"
+  }
+}
