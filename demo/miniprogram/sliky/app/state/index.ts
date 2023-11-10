@@ -13,6 +13,6 @@ export function defineAppState<State extends AppState, Hooks extends AppHooks>(
     },
   });
 
-  app.options.globalData = initialData;
+  app.options.appData = initialData;
   app.state = reactive(initialData);
 }
