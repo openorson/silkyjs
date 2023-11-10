@@ -1,16 +1,12 @@
-import { Page, PageActions, PageGetters, PageHooks, PageState, PageTrackers, PageTriggers } from "../index.js";
+import { Page, PageActions, PageEffects, PageGetters, PageHooks, PageState } from "../index.js";
 
 export function defineHooks<
   State extends PageState,
   Getters extends PageGetters,
   Actions extends PageActions,
-  Trackers extends PageTrackers,
-  Triggers extends PageTriggers,
+  Effects extends PageEffects,
   Hooks extends PageHooks
->(
-  page: Page<State, Getters, Actions, Trackers, Triggers, {}>,
-  hooks: Hooks
-): asserts page is Page<State, Getters, Actions, Trackers, Triggers, Hooks> {
+>(page: Page<State, Getters, Actions, Effects, {}>, hooks: Hooks): asserts page is Page<State, Getters, Actions, Effects, Hooks> {
   Object.entries(hooks).forEach(([name, hook]) => {
     const wrapper: { [Name in keyof PageHooks]?: (callback: PageHooks[Name]) => PageHooks[Name] } = {
       onLoad(callback) {

@@ -18,15 +18,19 @@ export type PageHooks = {
   onResize?: (options: WechatMiniprogram.Page.IResizeOption) => void | Promise<void>;
   onAddToFavorites?: (options: WechatMiniprogram.Page.IAddToFavoritesOption) => WechatMiniprogram.Page.IAddToFavoritesContent;
 };
-export type PageTrackers = {};
-export type PageTriggers = {};
+export type PageEffects = Record<
+  string,
+  {
+    effect(args: { mode: "add" | "set"; target: object; prop: string; path: string[]; value: unknown; oldValue?: unknown }): void;
+    dependencies: string[];
+  }
+>;
 
 export interface Page<
   State extends PageState = {},
   Getters extends PageGetters<State> = {},
   Actions extends PageActions = {},
-  Trackers extends PageTrackers = {},
-  Triggers extends PageTriggers = {},
+  Effects extends PageEffects = {},
   Hooks extends PageHooks = {}
 > {
   self: WechatMiniprogram.Page.Instance<State, {}>;
@@ -36,8 +40,7 @@ export interface Page<
   state: State;
   getters: { [Name in keyof Getters]: ReturnType<Getters[Name]> };
   actions: Actions;
-  trackers: Trackers;
-  triggers: Triggers;
+  effects: Effects;
   hooks: Hooks;
   bootstrap: () => void;
 }
@@ -70,8 +73,7 @@ export function createPage(): Page {
     getters: {},
     actions: {},
     hooks: {},
-    trackers: {},
-    triggers: {},
+    effects: {},
     bootstrap() {
       return Page(options);
     },

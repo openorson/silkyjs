@@ -1,22 +1,24 @@
 import { createReactive } from "../../common/reactive.js";
-import { Page, PageActions, PageGetters, PageHooks, PageState, PageTrackers, PageTriggers } from "../index.js";
+import { Page, PageActions, PageEffects, PageGetters, PageHooks, PageState } from "../index.js";
 
 export function defineState<
   State extends PageState,
   Getters extends PageGetters,
   Actions extends PageActions,
-  Trackers extends PageTrackers,
-  Triggers extends PageTriggers,
+  Effects extends PageEffects,
   Hooks extends PageHooks
->(
-  page: Page<{}, Getters, Actions, Trackers, Triggers, Hooks>,
-  initialState: State
-): asserts page is Page<State, Getters, Actions, Trackers, Triggers, Hooks> {
+>(page: Page<{}, Getters, Actions, Effects, Hooks>, initialState: State): asserts page is Page<State, Getters, Actions, Effects, Hooks> {
   const _initialState = (initialState ?? {}) as State;
 
   const reactive = createReactive({
     trigger(args) {
-      page.self.setData({ [args.path.join(".")]: args.value });
+      const path = args.path.join(".");
+
+      page.self.setData({ [path]: args.value });
+
+      Object.entries(page.effects).forEach(([_, { effect, dependencies }]) => {
+        if (dependencies.includes(path)) effect(args);
+      });
     },
   });
 
