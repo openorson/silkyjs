@@ -1,3 +1,7 @@
-import { Store } from "../../sliky/store";
+import { Store } from "../../sliky/app/store/index.js";
 
-export class AppStore extends Store {}
+export class AppStore extends Store {
+  field = 1;
+
+  changeField() {}
+}

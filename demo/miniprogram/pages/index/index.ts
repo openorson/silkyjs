@@ -1,11 +1,14 @@
-import { defineActions } from "../../sliky/page/actions/index.js";
-import { createPage } from "../../sliky/index.js";
 import { defineState } from "../../sliky/page/state/index.js";
 import { defineHooks } from "../../sliky/page/hooks/index.js";
 import { defineGetters } from "../../sliky/page/getters/index.js";
 import { defineEffects } from "../../sliky/page/effects/index.js";
+import { createPage } from "../../sliky/page/index.js";
+import { app } from "../../app/app.js";
+import { defineActions } from "../../sliky/page/actions/index.js";
 
 const page = createPage();
+
+console.log(app.store.appStore);
 
 defineState(page, {
   count: 1,
