@@ -2,7 +2,7 @@ import { Page, PageActions, PageGetters, PageHooks, PageState, PageTrackers, Pag
 
 export function defineGetters<
   State extends PageState,
-  Getters extends PageGetters,
+  Getters extends PageGetters<State>,
   Actions extends PageActions,
   Trackers extends PageTrackers,
   Triggers extends PageTriggers,
@@ -11,5 +11,9 @@ export function defineGetters<
   page: Page<State, {}, Actions, Trackers, Triggers, Hooks>,
   getters: Getters
 ): asserts page is Page<State, Getters, Actions, Trackers, Triggers, Hooks> {
-  page.getters = getters;
+  const _getters = (getters ?? {}) as Getters;
+
+  const initialData = Object.fromEntries(Object.entries(_getters).map(([name, getter]) => [name, getter(page.state)]));
+
+  Object.assign(page.options.data, initialData);
 }

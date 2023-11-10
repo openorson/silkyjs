@@ -4,6 +4,7 @@
 
   <view>{{ user.name }}</view>
   <view>{{ user.age }}</view>
+  <view>{{ username }}</view>
   <button bindtap="changeName">修改姓名</button>
 
   <view>{{ user.info.a }}</view>

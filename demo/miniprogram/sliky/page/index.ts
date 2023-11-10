@@ -1,7 +1,7 @@
 import { Router } from "../router/index.js";
 
 export type PageState = {};
-export type PageGetters = {};
+export type PageGetters<State extends PageState = {}> = Record<string, (state: State) => unknown>;
 export type PageActions = {};
 export type PageHooks = {
   onLoad?: (query: Record<string, string | undefined>) => void | Promise<void>;
@@ -23,7 +23,7 @@ export type PageTriggers = {};
 
 export interface Page<
   State extends PageState = {},
-  Getters extends PageGetters = {},
+  Getters extends PageGetters<State> = {},
   Actions extends PageActions = {},
   Trackers extends PageTrackers = {},
   Triggers extends PageTriggers = {},
@@ -34,7 +34,7 @@ export interface Page<
   router: Router;
   route: Route;
   state: State;
-  getters: Getters;
+  getters: { [Name in keyof Getters]: ReturnType<Getters[Name]> };
   actions: Actions;
   trackers: Trackers;
   triggers: Triggers;

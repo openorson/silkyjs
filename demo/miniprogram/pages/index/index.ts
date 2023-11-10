@@ -19,7 +19,7 @@ defineState(page, {
 });
 
 defineGetters(page, {
-  username: (state: any) => state.user.name,
+  username: (state) => state.user.name,
 });
 
 defineActions(page, {
@@ -27,7 +27,9 @@ defineActions(page, {
     page.state.count++;
   },
   changeName() {
+    console.log(page.getters.username);
     page.state.user.name = "rose";
+    console.log(page.getters.username);
   },
   changeInfo() {
     page.state.user.info = { a: 2, b: 3 };

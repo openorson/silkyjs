@@ -12,7 +12,7 @@ export function defineState<
   page: Page<{}, Getters, Actions, Trackers, Triggers, Hooks>,
   initialState: State
 ): asserts page is Page<State, Getters, Actions, Trackers, Triggers, Hooks> {
-  const initialData = (initialState ?? {}) as State;
+  const _initialState = (initialState ?? {}) as State;
 
   const reactive = createReactive({
     trigger(args) {
@@ -20,6 +20,7 @@ export function defineState<
     },
   });
 
-  page.options.data = initialData;
-  page.state = reactive(initialData);
+  Object.assign(page.options.data, _initialState);
+
+  page.state = reactive(_initialState);
 }
