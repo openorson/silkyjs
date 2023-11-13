@@ -1,7 +1,7 @@
 import { Router } from "../router/index.js";
 
+export type PageStore = Record<string, object>;
 export type PageState = {};
-export type PageGetters<State extends PageState = {}> = Record<string, (state: State) => unknown>;
 export type PageActions = {};
 export type PageHooks = {
   onLoad?: (query: Record<string, string | undefined>) => void | Promise<void>;
@@ -27,8 +27,8 @@ export type PageEffects = Record<
 >;
 
 export interface Page<
+  Store extends PageStore = {},
   State extends PageState = {},
-  Getters extends PageGetters<State> = {},
   Actions extends PageActions = {},
   Effects extends PageEffects = {},
   Hooks extends PageHooks = {}
@@ -37,8 +37,8 @@ export interface Page<
   options: Record<string, any>;
   router: Router;
   route: Route;
+  store: Store;
   state: State;
-  getters: { [Name in keyof Getters]: ReturnType<Getters[Name]> };
   actions: Actions;
   effects: Effects;
   hooks: Hooks;
@@ -69,11 +69,11 @@ export function createPage(): Page {
     options,
     route,
     router,
+    store: {},
     state: {},
-    getters: {},
     actions: {},
-    hooks: {},
     effects: {},
+    hooks: {},
     bootstrap() {
       return Page(options);
     },

@@ -1,14 +1,14 @@
 import { defineState } from "../../sliky/page/state/index.js";
 import { defineHooks } from "../../sliky/page/hooks/index.js";
-import { defineGetters } from "../../sliky/page/getters/index.js";
 import { defineEffects } from "../../sliky/page/effects/index.js";
 import { createPage } from "../../sliky/page/index.js";
-import { app } from "../../app/app.js";
 import { defineActions } from "../../sliky/page/actions/index.js";
+import { defineStores } from "../../sliky/page/store/index.js";
+import { appStore } from "../../store/index.js";
 
 const page = createPage();
 
-console.log(app.store.appStore);
+defineStores(page, { app: appStore });
 
 defineState(page, {
   count: 1,
@@ -20,10 +20,6 @@ defineState(page, {
       b: 2,
     },
   },
-});
-
-defineGetters(page, {
-  username: (state) => state.user.name,
 });
 
 defineEffects(page, {
@@ -54,8 +50,8 @@ defineActions(page, {
 });
 
 defineHooks(page, {
-  onLoad(query) {
-    console.log(query);
+  onLoad() {
+    page.store.app.field = 10;
   },
 });
 

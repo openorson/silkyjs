@@ -1,6 +1,6 @@
-import { AppState, AppHooks, App } from "../index.js";
+import { AppHooks, App, AppStore } from "../index.js";
 
-export function defineAppHooks<State extends AppState, Hooks extends AppHooks>(app: App<State, {}>, hooks: Hooks): asserts app is App<State, Hooks> {
+export function defineAppHooks<Store extends AppStore, Hooks extends AppHooks>(app: App<Store, {}>, hooks: Hooks): asserts app is App<Store, Hooks> {
   Object.entries(hooks).forEach(([name, hook]) => {
     const wrapper: { [Name in keyof AppHooks]?: (callback: AppHooks[Name]) => AppHooks[Name] } = {
       onLaunch(callback) {

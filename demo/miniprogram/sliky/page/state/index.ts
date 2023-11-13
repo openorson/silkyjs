@@ -1,13 +1,13 @@
 import { createReactive } from "../../common/reactive.js";
-import { Page, PageActions, PageEffects, PageGetters, PageHooks, PageState } from "../index.js";
+import { Page, PageActions, PageEffects, PageHooks, PageState, PageStore } from "../index.js";
 
 export function defineState<
+  Store extends PageStore,
   State extends PageState,
-  Getters extends PageGetters,
   Actions extends PageActions,
   Effects extends PageEffects,
   Hooks extends PageHooks
->(page: Page<{}, Getters, Actions, Effects, Hooks>, initialState: State): asserts page is Page<State, Getters, Actions, Effects, Hooks> {
+>(page: Page<Store, {}, Actions, Effects, Hooks>, initialState: State): asserts page is Page<Store, State, Actions, Effects, Hooks> {
   const _initialState = (initialState ?? {}) as State;
 
   const reactive = createReactive({

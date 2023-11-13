@@ -10,4 +10,8 @@
   <view>{{ user.info.a }}</view>
   <view>{{ user.info.b }}</view>
   <button bindtap="changeInfo">修改信息</button>
+
+  <view>{{ store.app.base }}</view>
+  <view>{{ store.app.field }}</view>
+  <button bindtap="store.app.changeField">修改信息</button>
 </view>

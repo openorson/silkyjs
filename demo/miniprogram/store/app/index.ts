@@ -1,7 +1,16 @@
-import { Store } from "../../sliky/app/store/index.js";
+export class BaseStore {
+  base = 2;
 
-export class AppStore extends Store {
+  changeBase() {
+    this.base++;
+  }
+}
+
+export class AppStore extends BaseStore {
   field = 1;
 
-  changeField() {}
+  changeField() {
+    this.field++;
+    this.changeBase();
+  }
 }
