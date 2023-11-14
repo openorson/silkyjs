@@ -45,6 +45,8 @@ export interface Page<
 export interface Route {
   path: string;
   query: object;
+  coldQuery: object;
+  hotQuery: object;
 }
 
 export function createPage(): Page {
@@ -59,6 +61,8 @@ export function createPage(): Page {
   const route: Route = {
     path: "",
     query: {},
+    coldQuery: {},
+    hotQuery: {},
   };
 
   const page: Page = {
