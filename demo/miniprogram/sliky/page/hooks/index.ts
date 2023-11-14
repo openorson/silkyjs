@@ -10,7 +10,7 @@ export function defineHooks<
   Object.entries(hooks).forEach(([name, hook]) => {
     const wrapper: { [Name in keyof PageHooks]?: (callback: PageHooks[Name]) => PageHooks[Name] } = {
       onLoad(callback) {
-        return function onLoad(this: any, ...args) {
+        return function onLoad(this: WechatMiniprogram.Page.Instance<State, {}>, ...args) {
           page.self = this;
           page.route.path = page.self.route;
           page.route.query = args[0] ?? {};

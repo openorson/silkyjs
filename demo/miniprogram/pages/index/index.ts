@@ -3,12 +3,11 @@ import { defineHooks } from "../../sliky/page/hooks/index.js";
 import { defineEffects } from "../../sliky/page/effects/index.js";
 import { createPage } from "../../sliky/page/index.js";
 import { defineActions } from "../../sliky/page/actions/index.js";
-import { defineStores } from "../../sliky/page/store/index.js";
-import { appStore } from "../../store/index.js";
+import { useApp } from "../../store/index.js";
 
 const page = createPage();
 
-defineStores(page, { app: appStore });
+const app = useApp();
 
 defineState(page, {
   count: 1,
@@ -51,7 +50,7 @@ defineActions(page, {
 
 defineHooks(page, {
   onLoad() {
-    page.store.app.field = 10;
+    app.inject();
   },
 });
 

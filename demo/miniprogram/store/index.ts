@@ -1,3 +1,4 @@
+import { createStore } from "../sliky/store/index.js";
 import { AppStore } from "./app/index.js";
 
-export const appStore = new AppStore();
+export const useApp = createStore("app", AppStore);
