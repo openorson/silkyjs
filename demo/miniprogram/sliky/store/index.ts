@@ -1,16 +1,28 @@
+import { getOwnFunctionProperty } from "../common/property";
 import { createReactive } from "../common/reactive";
 
-export interface StoreConstructor<T = object> extends Function {
-  new (...args: any[]): T;
+export interface StoreConstructor<Type = {}> extends Function {
+  new (...args: any[]): Type;
 }
 
-export function createStore<Name extends string, Store extends object>(name: Name, constructor: StoreConstructor<Store>) {
-  const store = new constructor();
+export interface Store<Name extends string, Entity extends {}> {
+  name: Name;
+  store: Entity;
+  inject(): void;
+  reset(): void;
+}
 
-  const data = JSON.parse(JSON.stringify(store));
+export interface StoreUser<Name extends string, Entity extends {}> {
+  $name: Name;
+  (): Store<Name, Entity>;
+}
 
-  return function useStore() {
-    let page: WechatMiniprogram.Page.Instance<{}, {}>;
+export function createStore<Name extends string, Entity extends {}>(name: Name, entity: Entity) {
+  const data = JSON.parse(JSON.stringify(entity));
+  const functions = getOwnFunctionProperty(entity);
+
+  const storeUser: StoreUser<Name, Entity> = function () {
+    let page: WechatMiniprogram.Page.Instance<any, any>;
 
     const reactive = createReactive({
       trigger(args) {
@@ -20,14 +32,25 @@ export function createStore<Name extends string, Store extends object>(name: Nam
       },
     });
 
+    const store = reactive(entity);
+
     function inject() {
       const pages = getCurrentPages();
       page = pages[pages.length - 1];
+
       page.setData({ [`$.${name}`]: data });
+
+      functions.forEach((action) => {
+        page[`$.${name}.${action}`] = (...args: any[]) => (entity[action as keyof typeof entity] as Function).call(store, ...args);
+      });
     }
 
     function reset() {}
 
-    return { store: reactive(store), inject, reset };
+    return { name, store, inject, reset };
   };
+
+  storeUser["$name"] = name;
+
+  return storeUser;
 }
