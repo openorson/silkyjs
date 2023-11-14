@@ -1,3 +1,4 @@
+import { eventChannel } from "../event/built-in/index.js";
 import { Router } from "../router/index.js";
 
 export type PageState = {};
@@ -75,6 +76,29 @@ export function createPage(): Page {
     effects: {},
     hooks: {},
     bootstrap() {
+      options.onLoad = async function (...args) {
+        self = this;
+        page.route.path = self.route;
+        page.route.query = args[0] ?? {};
+        await options.onLoad?.call?.(this, ...args);
+        eventChannel.emit("page-load", { path: self.route, query: args[0] });
+      };
+
+      options.onShow = async function (...args) {
+        await options.onShow?.call?.(this, ...args);
+        eventChannel.emit("page-show");
+      };
+
+      options.onHide = async function (...args) {
+        await options.onHide?.call?.(this, ...args);
+        eventChannel.emit("page-hide");
+      };
+
+      options.onUnload = async function (...args) {
+        await options.onUnload?.call?.(this, ...args);
+        eventChannel.emit("page-unload");
+      };
+
       return Page(options);
     },
   };

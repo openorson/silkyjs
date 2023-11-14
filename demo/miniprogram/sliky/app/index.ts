@@ -1,3 +1,5 @@
+import { eventChannel } from "../event/built-in/index.js";
+
 export type AppHooks = {
   onLaunch?: (options: WechatMiniprogram.App.LaunchShowOption) => void;
   onShow?: (options: WechatMiniprogram.App.LaunchShowOption) => void;
@@ -11,7 +13,6 @@ export type AppHooks = {
 export interface App<Hooks extends AppHooks = {}> {
   self: WechatMiniprogram.App.Instance<WechatMiniprogram.IAnyObject>;
   options: Record<string, any>;
-  hooks: Hooks;
   bootstrap: () => void;
 }
 
@@ -23,8 +24,23 @@ export function createApp(): App {
   const app: App = {
     self,
     options,
-    hooks: {},
     bootstrap() {
+      options.onLaunch = async function (...args) {
+        self = this;
+        await options.onLaunch?.call?.(this, ...args);
+        eventChannel.emit("app-launch", args[0]);
+      };
+
+      options.onShow = async function (...args) {
+        await options.onShow?.call?.(this, ...args);
+        eventChannel.emit("app-show", args[0]);
+      };
+
+      options.onHide = async function (...args) {
+        await options.onHide?.call?.(this, ...args);
+        eventChannel.emit("app-hide");
+      };
+
       return App(options);
     },
   };
