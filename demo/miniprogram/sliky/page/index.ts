@@ -1,6 +1,5 @@
 import { Router } from "../router/index.js";
 
-export type PageStore = Record<string, object>;
 export type PageState = {};
 export type PageActions = {};
 export type PageHooks = {
@@ -27,7 +26,6 @@ export type PageEffects = Record<
 >;
 
 export interface Page<
-  Store extends PageStore = {},
   State extends PageState = {},
   Actions extends PageActions = {},
   Effects extends PageEffects = {},
@@ -37,7 +35,6 @@ export interface Page<
   options: Record<string, any>;
   router: Router;
   route: Route;
-  store: Store;
   state: State;
   actions: Actions;
   effects: Effects;
@@ -69,7 +66,6 @@ export function createPage(): Page {
     options,
     route,
     router,
-    store: {},
     state: {},
     actions: {},
     effects: {},

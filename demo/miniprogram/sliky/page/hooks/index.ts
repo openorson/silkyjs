@@ -1,12 +1,9 @@
-import { Page, PageActions, PageEffects, PageHooks, PageState, PageStore } from "../index.js";
+import { Page, PageActions, PageEffects, PageHooks, PageState } from "../index.js";
 
-export function defineHooks<
-  Store extends PageStore,
-  State extends PageState,
-  Actions extends PageActions,
-  Effects extends PageEffects,
-  Hooks extends PageHooks
->(page: Page<Store, State, Actions, Effects, {}>, hooks: Hooks): asserts page is Page<Store, State, Actions, Effects, Hooks> {
+export function useHooks<State extends PageState, Actions extends PageActions, Effects extends PageEffects, Hooks extends PageHooks>(
+  page: Page<State, Actions, Effects, {}>,
+  hooks: Hooks
+): asserts page is Page<State, Actions, Effects, Hooks> {
   Object.entries(hooks).forEach(([name, hook]) => {
     const wrapper: { [Name in keyof PageHooks]?: (callback: PageHooks[Name]) => PageHooks[Name] } = {
       onLoad(callback) {

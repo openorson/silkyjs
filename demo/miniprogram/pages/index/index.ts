@@ -1,15 +1,15 @@
-import { defineState } from "../../sliky/page/state/index.js";
-import { defineHooks } from "../../sliky/page/hooks/index.js";
-import { defineEffects } from "../../sliky/page/effects/index.js";
 import { createPage } from "../../sliky/page/index.js";
-import { defineActions } from "../../sliky/page/actions/index.js";
+import { useState } from "../../sliky/page/state/index.js";
+import { useHooks } from "../../sliky/page/hooks/index.js";
+import { useEffects } from "../../sliky/page/effects/index.js";
+import { useActions } from "../../sliky/page/actions/index.js";
 import { useApp } from "../../store/index.js";
 
 const page = createPage();
 
 const app = useApp();
 
-defineState(page, {
+useState(page, {
   count: 1,
   user: {
     name: "jack",
@@ -21,7 +21,7 @@ defineState(page, {
   },
 });
 
-defineEffects(page, {
+useEffects(page, {
   count: {
     effect(args) {
       console.log("count", args);
@@ -36,7 +36,7 @@ defineEffects(page, {
   },
 });
 
-defineActions(page, {
+useActions(page, {
   incr() {
     page.state.count++;
   },
@@ -48,7 +48,7 @@ defineActions(page, {
   },
 });
 
-defineHooks(page, {
+useHooks(page, {
   onLoad() {
     app.inject();
   },
