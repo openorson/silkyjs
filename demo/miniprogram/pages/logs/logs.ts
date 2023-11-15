@@ -1,19 +1,20 @@
-// logs.ts
-// const util = require('../../utils/util.js')
-import { formatTime } from '../../utils/util'
+import { createPage } from "../../sliky/page/index.js";
+import { useHooks } from "../../sliky/page/hooks/index.js";
+import { router } from "../../router/index.js";
+import { useActions } from "../../sliky/page/actions/index.js";
 
-Page({
-  data: {
-    logs: [],
+const page = createPage();
+
+useActions(page, {
+  back() {
+    router.back({ index: 1 }, 1);
   },
-  onLoad() {
-    this.setData({
-      logs: (wx.getStorageSync('logs') || []).map((log: string) => {
-        return {
-          date: formatTime(new Date(log)),
-          timeStamp: log
-        }
-      }),
-    })
+});
+
+useHooks(page, {
+  onShow() {
+    console.log("logs", router.route.path, router.route.parmas);
   },
-})
+});
+
+page.bootstrap();

@@ -1,5 +1,4 @@
 import { eventChannel } from "../event/built-in/index.js";
-import { Router } from "../router/index.js";
 
 export type PageState = {};
 export type PageActions = {};
@@ -34,20 +33,11 @@ export interface Page<
 > {
   self: WechatMiniprogram.Page.Instance<State, {}>;
   options: Record<string, any>;
-  router: Router;
-  route: Route;
   state: State;
   actions: Actions;
   effects: Effects;
   hooks: Hooks;
   bootstrap: () => void;
-}
-
-export interface Route {
-  path: string;
-  query: object;
-  coldQuery: object;
-  hotQuery: object;
 }
 
 export function createPage(): Page {
@@ -57,46 +47,37 @@ export function createPage(): Page {
     data: {},
   };
 
-  const router = Router.getInstance();
-
-  const route: Route = {
-    path: "",
-    query: {},
-    coldQuery: {},
-    hotQuery: {},
-  };
-
   const page: Page = {
     self,
     options,
-    route,
-    router,
     state: {},
     actions: {},
     effects: {},
     hooks: {},
     bootstrap() {
+      const onLoad = options.onLoad;
       options.onLoad = async function (...args) {
         self = this;
-        page.route.path = self.route;
-        page.route.query = args[0] ?? {};
-        await options.onLoad?.call?.(this, ...args);
-        eventChannel.emit("page-load", { path: self.route, query: args[0] });
+        eventChannel.emit("page-load", { path: self.route, params: args[0] ?? {} });
+        await onLoad?.call?.(this, ...args);
       };
 
+      const onShow = options.onShow;
       options.onShow = async function (...args) {
-        await options.onShow?.call?.(this, ...args);
         eventChannel.emit("page-show");
+        await onShow?.call?.(this, ...args);
       };
 
+      const onHide = options.onHide;
       options.onHide = async function (...args) {
-        await options.onHide?.call?.(this, ...args);
         eventChannel.emit("page-hide");
+        await onHide?.call?.(this, ...args);
       };
 
+      const onUnload = options.onUnload;
       options.onUnload = async function (...args) {
-        await options.onUnload?.call?.(this, ...args);
         eventChannel.emit("page-unload");
+        await onUnload?.call?.(this, ...args);
       };
 
       return Page(options);

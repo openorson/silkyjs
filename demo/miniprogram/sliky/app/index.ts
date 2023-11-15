@@ -25,20 +25,23 @@ export function createApp(): App {
     self,
     options,
     bootstrap() {
+      const onLaunch = options.onLaunch;
       options.onLaunch = async function (...args) {
         self = this;
-        await options.onLaunch?.call?.(this, ...args);
         eventChannel.emit("app-launch", args[0]);
+        await onLaunch?.call?.(this, ...args);
       };
 
+      const onShow = options.onShow;
       options.onShow = async function (...args) {
-        await options.onShow?.call?.(this, ...args);
         eventChannel.emit("app-show", args[0]);
+        await onShow?.call?.(this, ...args);
       };
 
+      const onHide = options.onHide;
       options.onHide = async function (...args) {
-        await options.onHide?.call?.(this, ...args);
         eventChannel.emit("app-hide");
+        await onHide?.call?.(this, ...args);
       };
 
       return App(options);

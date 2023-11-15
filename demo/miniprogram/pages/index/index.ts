@@ -4,6 +4,7 @@ import { useHooks } from "../../sliky/page/hooks/index.js";
 import { useEffects } from "../../sliky/page/effects/index.js";
 import { useActions } from "../../sliky/page/actions/index.js";
 import { useApp } from "../../store/index.js";
+import { router } from "../../router/index.js";
 
 const page = createPage();
 
@@ -46,11 +47,17 @@ useActions(page, {
   changeInfo() {
     page.state.user.info = { a: 2, b: 3 };
   },
+  jump() {
+    router.push("pages/logs/logs", { log: 1 });
+  },
 });
 
 useHooks(page, {
   onLoad() {
     app.inject();
+  },
+  onShow() {
+    console.log("index", router.route.path, router.route.parmas);
   },
 });
 
