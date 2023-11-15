@@ -112,6 +112,8 @@ class Router<Routes extends RouterRoutes = Record<string, object>> {
 
     return new Promise<WechatMiniprogram.GeneralCallbackResult>((success, fail) => {
       const pages = getCurrentPages();
+      // TODO 测试此处算法是否正确
+      // TODO 完善createComponent
       const page = pages[_delta > pages.length ? 0 : pages.length - _delta - 1];
 
       this[CURRENT_ROUTE_KEY].path = page.route as Extract<keyof Routes, string>;
